@@ -45,6 +45,7 @@ if (config.health.healthz.enabled) {
 }
 
 (async function () {
+    // Setup matrix-bot-sdk.
     const storage = new SimpleFsStorageProvider(path.join(config.dataPath, "bot.json"));
 
     let client: MatrixClient;
@@ -57,6 +58,7 @@ if (config.health.healthz.enabled) {
 
     config.RUNTIME.client = client;
 
+    // Autojoin on invite.
     client.on("room.invite", async (roomId: string, inviteEvent: any) => {
         const membershipEvent = new MembershipEvent(inviteEvent);
 

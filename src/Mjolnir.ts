@@ -24,6 +24,7 @@ import {
     Permalinks,
     UserID
 } from "matrix-bot-sdk";
+
 import BanList, { ALL_RULE_TYPES } from "./models/BanList";
 import { applyServerAcls } from "./actions/ApplyAcl";
 import { RoomUpdateError } from "./models/RoomUpdateError";
@@ -37,6 +38,7 @@ import { PROTECTIONS } from "./protections/protections";
 import { UnlistedUserRedactionQueue } from "./queues/UnlistedUserRedactionQueue";
 import { Healthz } from "./health/healthz";
 import { EventRedactionQueue, RedactUserInRoom } from "./queues/EventRedactionQueue";
+import { WebAPIs } from "./webapis/WebAPIs";
 
 export const STATE_NOT_STARTED = "not_started";
 export const STATE_CHECKING_PERMISSIONS = "checking_permissions";
@@ -69,6 +71,7 @@ export class Mjolnir {
     private explicitlyProtectedRoomIds: string[] = [];
     private knownUnprotectedRooms: string[] = [];
 
+    private webapis: WebAPIs;
     constructor(
         public readonly client: MatrixClient,
         public readonly protectedRooms: { [roomId: string]: string },
@@ -79,6 +82,8 @@ export class Mjolnir {
         for (const reason of config.automaticallyRedactForReasons) {
             this.automaticRedactionReasons.push(new MatrixGlob(reason.toLowerCase()));
         }
+
+        // Setup bot.
 
         client.on("room.event", this.handleEvent.bind(this));
 
@@ -134,6 +139,9 @@ export class Mjolnir {
                 this.displayName = profile['displayname'];
             }
         });
+
+        // Setup Web APIs
+        this.webapis = new WebAPIs(this.client);
     }
 
     public get lists(): BanList[] {
@@ -161,8 +169,18 @@ export class Mjolnir {
         return this.automaticRedactionReasons;
     }
 
+    /**
+     * Start Mjölnir.
+     */
     public start() {
         return this.client.start().then(async () => {
+            // Start the bot.
+            await this.client.start();
+
+            // Start the web server.
+            await this.webapis.start();
+
+            // Load the state.
             this.currentState = STATE_CHECKING_PERMISSIONS;
 
             await logMessage(LogLevel.DEBUG, "Mjolnir@startup", "Loading protected rooms...");
