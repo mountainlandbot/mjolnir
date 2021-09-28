@@ -24,6 +24,7 @@ interface IConfig {
         use: boolean;
         username: string;
         password: string;
+        accessToken: string;
     };
     dataPath: string;
     acceptInvitesFromGroup: string;
@@ -77,6 +78,7 @@ const defaultConfig: IConfig = {
         use: false,
         username: "",
         password: "",
+        accessToken: "",
     },
     dataPath: "/data/storage",
     acceptInvitesFromGroup: '+example:example.org',

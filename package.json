@@ -26,6 +26,6 @@
     "config": "^3.3.6",
     "escape-html": "^1.0.3",
     "js-yaml": "^4.1.0",
-    "matrix-bot-sdk": "^0.5.19"
+    "matrix-bot-sdk": "git+https://github.com/jaywink/matrix-bot-sdk.git#6d8f5d58ff02dd2ad2beef4c2c48e5a9514273a3"
   }
 }

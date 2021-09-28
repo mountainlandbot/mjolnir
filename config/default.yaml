@@ -18,6 +18,8 @@ pantalaimon:
   # stored the access token.
   password: your_password
 
+  accessToken: foobar
+
 # The directory the bot should store various bits of information in
 dataPath: "/data/storage"
 

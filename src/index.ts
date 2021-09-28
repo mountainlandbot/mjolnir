@@ -50,7 +50,11 @@ if (config.health.healthz.enabled) {
     let client: MatrixClient;
     if (config.pantalaimon.use) {
         const pantalaimon = new PantalaimonClient(config.homeserverUrl, storage);
-        client = await pantalaimon.createClientWithCredentials(config.pantalaimon.username, config.pantalaimon.password);
+        if (config.pantalaimon.accessToken) {
+            client = await pantalaimon.createClientWithToken(config.pantalaimon.accessToken);
+        } else {
+            client = await pantalaimon.createClientWithCredentials(config.pantalaimon.username, config.pantalaimon.password);
+        }
     } else {
         client = new MatrixClient(config.homeserverUrl, config.accessToken, storage);
     }
